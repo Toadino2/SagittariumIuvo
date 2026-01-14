@@ -1,0 +1,493 @@
+#:kivy 2.2.0
+
+<MenùPrincipale>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 15
+
+        Label:
+            text: "SagittariumIuvo"
+            font_size: "24sp"
+            size_hint_y: None
+            height: "40dp"
+
+        Button:
+            text: "Esci"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.esci()
+
+        Button:
+            text: "Inserisci un nuovo allenamento"
+            background_normal: ""
+            background_color: 0, 0, 1, 1
+            color: 1, 1, 1, 1
+            on_release: root.passa("Nuovo allenamento")
+
+        Button:
+            text: "Diario delle sessioni"
+            background_normal: ""
+            background_color: 1, 1, 0, 1
+            color: 0, 0, 0, 1
+            on_release: root.passa("Diario delle sessioni")
+
+        Button:
+            text: "Statistiche generali"
+            background_normal: ""
+            background_color: 0, 1, 0.2, 1
+            color: 1, 1, 1, 1
+            on_release: root.passa("Statistiche generali")
+
+        Button:
+            text: "Impostazioni"
+            background_normal: ""
+            background_color: 1, 1, 1, 1
+            color: 0, 0, 0, 1
+            on_release: root.passa("Impostazioni")
+
+<NuovoAllenamento>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "Nuovo allenamento"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        Button:
+            text: "Indietro"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.torna()
+
+        Button:
+            text: "Carica file dati"
+            background_normal: ""
+            background_color: 1, 1, 1, 1
+            color: 0, 0, 0, 1
+            on_release: root.file()
+
+        Button:
+            text: "Carica immagine bersaglio"
+            background_normal: ""
+            background_color: 0, 1, 0, 1
+            color: 0, 0, 0, 1
+            on_release: root.immagine()
+
+        Button:
+            text: "Annota manualmente"
+            background_normal: ""
+            background_color: 1, 0.3, 0.3, 1
+            color: 1, 1, 1, 1
+            on_release: root.manuale()
+
+<SchermataAnnotazione>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Annotazione sessione"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        BoxLayout:
+            spacing: 10
+
+            Image:
+                id: immaginebersaglio
+                size_hint_x: 0.4
+                allow_stretch: True
+                keep_ratio: True
+
+            BersaglioToccabile:
+                id: target
+                pos_hint_x: 1.0
+                size_hint_y: 0.60
+                on_arrow_added: root.nuovafreccia(*args)
+
+        BoxLayout:
+            size_hint_y: None
+            height: "40dp"
+            spacing: 10
+
+            Button:
+                text: "Annulla"
+                background_normal: ""
+                background_color: 1, 1, 1, 1
+                color: 0, 0, 0, 1
+                on_release: root.annullafreccia()
+
+            Button:
+                text: "Rimuovi freccia"
+                background_normal: ""
+                background_color: 2, 1, 0, 1
+                color: 0, 0, 0, 1
+                on_release: root.rimuovi_freccia_selezionata()
+
+            Button:
+                text: "Nuova volée"
+                background_normal: ""
+                background_color: 0, 1, 0, 1
+                color: 1, 1, 1, 1
+                on_release: root.nuovavolée()
+
+            Label:
+                text: "Volée corrente: " + str(root.nuovavolée)
+                size_hint_x: 0.7
+
+        GridLayout:
+            cols: 3
+            size_hint_y: None
+            height: self.minimum_height
+            row_default_height: "40dp"
+            spacing: 8
+
+            Label:
+                text: "Le frecce sono in ordine?"
+            CheckBox:
+                id: ordinatore
+            Label:
+                text: "Le frecce sono identificate?"
+            CheckBox:
+                id: identificatore
+            Label:
+                text: "ID freccia:"
+                size_hint_x: None
+                width: "120dp"
+            TextInput:
+                text: root.id_manual
+                multiline: False
+                on_text: root.id_manual = self.text
+            Label:
+                text: "Distanza dal bersaglio:"
+            TextInput:
+                id: distanziatore
+                multiline: False
+                text: "18"
+            Label:
+                text: "Data (YYYY-MM-DD)"
+            TextInput:
+                text: root.data
+                multiline: False
+                on_text_validate: root.sistemadata()
+                on_text: root.data = self.text
+            Button:
+                text: "Oggi"
+                on_release: root.mettioggi()
+
+            Label:
+                text: "Arco"
+            Spinner:
+                id: bow_spinner
+                text: root.arco if root.arco else "Seleziona arco"
+                on_text: root.selezionaarco(self.text)
+            Widget:
+
+            Label:
+                text: "Tag (virgole)"
+            TextInput:
+                text: root.tag
+                hint_text: "es. indoor, gara"
+                multiline: False
+                on_text: root.tag = self.text
+            Widget:
+
+        Label:
+            text: root.status
+            size_hint_y: None
+            height: "22dp"
+
+        BoxLayout:
+            size_hint_y: None
+            height: "50dp"
+            spacing: 10
+
+            Button:
+                text: "Salva soltanto"
+                background_normal: ""
+                background_color: 0, 0.2, 1, 1
+                color: 1, 1, 1, 1
+                on_release: root.solosalva()
+
+            Button:
+                text: "Salva e analizza"
+                background_normal: ""
+                background_color: 0, 0, 1, 1
+                color: 1, 1, 1, 1
+                on_release: root.analizza()
+
+            Button:
+                text: "Indietro"
+                background_normal: ""
+                background_color: 1, 0, 0, 1
+                color: 1, 1, 1, 1
+                on_release: root.torna()
+
+<DiarioSessioni>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Sessioni registrate"
+            size_hint_y: None
+            height: "40dp"
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: sessions_container
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 6
+
+        Button:
+            text: "Indietro"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            size_hint_y: None
+            height: "45dp"
+            on_release: root.torna()
+
+
+<PaginaDiario>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Analisi sulla sessione"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 8
+
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: "40dp"
+                    spacing: 10
+                    id: analizzatore
+
+        Button:
+            text: "Indietro"
+            size_hint_y: None
+            height: "45dp"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.torna()
+
+<StatisticheGenerali>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Statistiche generali"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 8
+                id: serie_storica
+
+        Button:
+            text: "Indietro"
+            size_hint_y: None
+            height: "45dp"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.torna()
+
+<SchermataImpostazioni>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 15
+
+        Label:
+            text: "Impostazioni"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        Button:
+            text: "Gestione archi"
+            background_normal: ""
+            background_color: 1, 1, 1, 1
+            color: 0, 0, 0, 1
+            on_release: root.vediarchi()
+
+        Button:
+            text: "Impostazioni applicazione e analisi"
+            background_normal: ""
+            background_color: 0, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.vediimpostazioni()
+
+        Button:
+            text: "Impostazioni statistiche generali"
+            on_release: root.vedigenerali()
+
+        Button:
+            text: "Indietro"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.torna()
+
+<ImpostazioniArchi>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        BoxLayout:
+            size_hint_y: None
+            height: "40dp"
+
+            Button:
+                text: "Indietro"
+                background_normal: ""
+                background_color: 1, 0, 0, 1
+                color: 1, 1, 1, 1
+                size_hint_x: None
+                width: "100dp"
+                on_release: root.torna()
+
+            Label:
+                text: "Gestione archi"
+                bold: True
+
+        BoxLayout:
+            spacing: 10
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: 0.4
+                spacing: 6
+
+                Label:
+                    text: "Archi registrati"
+                    size_hint_y: None
+                    height: "30dp"
+
+                ScrollView:
+                    do_scroll_x: False
+                    BoxLayout:
+                        id: lista_archi
+                        orientation: "vertical"
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: 4
+
+                Button:
+                    text: "Aggiungi nuovo arco"
+                    background_normal: ""
+                    background_color: 0, 1, 0, 1
+                    color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: "40dp"
+                    on_release: root.nuovo_arco()
+
+            BoxLayout:
+                orientation: "vertical"
+                spacing: 8
+
+                Label:
+                    text: "Dettagli arco"
+                    size_hint_y: None
+                    height: "30dp"
+
+                Spinner:
+                    text: root.arco_corrente.get("tipo", "Tipo arco")
+                    values: ["Olimpico", "Nudo", "Compound"]
+                    on_text: root.tipoarco(self.text)
+
+                GridLayout:
+                    rows: 21
+                    columns: 2
+                    id: lista_attributi
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: "40dp"
+                    spacing: 10
+
+                    Button:
+                        text: "Salva"
+                        background_normal: ""
+                        background_color: 0, 0, 1, 1
+                        color: 1, 1, 1, 1
+                        on_release: root.salva_arco()
+
+                    Button:
+                        text: "Cancella"
+                        on_release: root.cancella_arco()
+
+
+<SceltaParametri>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Impostazioni applicazione e analisi"
+            font_size: "20sp"
+            size_hint_y: None
+            height: "40dp"
+
+        ScrollView:
+            do_scroll_x: False
+            GridLayout:
+                rows: 250
+                columns: 2
+                id: lista_impostazioni
+
+        Button:
+            text: "Salva"
+            size_hint_y: None
+            height: "45dp"
+            background_normal: ""
+            background_color: 0, 0, 1, 1
+            color: 1, 1, 1, 1
+            on_release: root.salvaimpostazioni()
+
+        Button:
+            text: "Indietro"
+            size_hint_y: None
+            height: "45dp"
+            background_normal: ""
+            background_color: 1, 0, 0, 1
+            color: 1, 1, 1, 1
+            on_release: root.torna()
