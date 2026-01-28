@@ -26,7 +26,8 @@ and overall architecture. The current codebase prioritizes extensibility and exp
 Further testing, optimization, and feature expansion are planned. 
 The statistical analysis core has been extensively exercised in practice,
 while parts of the GUI and orchestration layer are currently under active development
-and may require further refinement.
+and may require further refinement. Full integration of a computer vision model is also
+planned (see https://universe.roboflow.com/statisticallearningcolbrutti/statisticallearningcolbrutti).
 
 
 ### Repository contents
